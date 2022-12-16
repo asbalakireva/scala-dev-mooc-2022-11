@@ -213,14 +213,13 @@ object hof{
   // Covariant - animal родитель dog, Option[Animal] родитель Option[Dog]
 
 
-
   // Contravariant - animal родитель dog, Option[Dog] родитель Option[Animal]
 
   // Invariant - нет отношений
 
   // Вопрос вариантности
 
-  sealed trait Option[+T]{
+  sealed trait Option[+T] {
 
     def isEmpty: Boolean = this match {
       case Option.Some(v) => false
@@ -234,113 +233,131 @@ object hof{
       case Option.None => Option.None
     }
 
+    /**
+     *
+     * Реализовать метод printIfAny, который будет печатать значение, если оно есть
+     */
+
+    def printIfAny: Unit = this match {
+      case Option.Some(v) => println(v)
+      case Option.None => ()
+    }
+
+    /**
+     *
+     * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
+     */
+
+//   для реализации zip создала вспомогательный метод, получающий значение из Option
+    def get: T = this match {
+      case Option.Some(v) => v
+      case Option.None => throw new Exception("empty Option")
+    }
+
+    def zip[B](option: Option[B]): Option[(T, B)] =
+      if (this.isEmpty || option.isEmpty) Option.None
+      else Option(this.get, option.get)
+
+
+    /**
+     *
+     * Реализовать метод filter, который будет возвращать не пустой Option
+     * в случае если исходный не пуст и предикат от значения = true
+     */
+
+    def filter(f: T => Boolean): Option[T] = this match {
+      case Option.Some(v) if f(v) => Option.Some(v)
+      case Option.None => Option.None
+
+    }
+
+
+    object Option {
+
+      case class Some[T](v: T) extends Option[T]
+
+      case object None extends Option[Nothing]
+
+      def apply[T](v: T): Option[T] = Some(v)
+    }
+
+
   }
 
+  object list {
 
-  object Option {
-    case class Some[T](v: T) extends Option[T]
-    case object None extends Option[Nothing]
+    /**
+     *
+     * Реализовать односвязанный иммутабельный список List
+     * Список имеет два случая:
+     * Nil - пустой список
+     * Cons - непустой, содердит первый элемент (голову) и хвост (оставшийся список)
+     */
 
-    def apply[T](v: T): Option[T] = Some(v)
-  }
+    trait List[+T] {
+      def ::[TT >: T](elem: TT): List[TT] = ???
+    }
 
+    object List {
 
+      case class ::[A](head: A, tail: List[A]) extends List[A]
 
+      case object Nil extends List[Nothing]
 
+      def apply[A](v: A*): List[A] =
+        if (v.isEmpty) Nil else ::(v.head, apply(v.tail: _*))
+    }
 
-
-  /**
-   *
-   * Реализовать метод printIfAny, который будет печатать значение, если оно есть
-   */
-
-
-  /**
-   *
-   * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
-   */
-
-
-  /**
-   *
-   * Реализовать метод filter, который будет возвращать не пустой Option
-   * в случае если исходный не пуст и предикат от значения = true
-   */
-
- }
-
- object list {
-   /**
-    *
-    * Реализовать односвязанный иммутабельный список List
-    * Список имеет два случая:
-    * Nil - пустой список
-    * Cons - непустой, содердит первый элемент (голову) и хвост (оставшийся список)
-    */
-
-   trait List[+T] {
-     def ::[TT >: T](elem: TT): List[TT] = ???
-   }
-
-   object List {
-     case class ::[A](head: A, tail: List[A]) extends List[A]
-     case object Nil extends List[Nothing]
-
-     def apply[A](v: A*): List[A] =
-       if(v.isEmpty) Nil else ::(v.head, apply(v.tail:_*))
-   }
-
-   List(1, 2, 3)
+    List(1, 2, 3)
 
 
-
-
-
-   /**
+    /**
      * Метод cons, добавляет элемент в голову списка, для этого метода можно воспользоваться названием `::`
      *
      */
 
     /**
-      * Метод mkString возвращает строковое представление списка, с учетом переданного разделителя
-      *
-      */
+     * Метод mkString возвращает строковое представление списка, с учетом переданного разделителя
+     *
+     */
 
     /**
-      * Конструктор, позволяющий создать список из N - го числа аргументов
-      * Для этого можно воспользоваться *
-      * 
-      * Например вот этот метод принимает некую последовательность аргументов с типом Int и выводит их на печать
-      * def printArgs(args: Int*) = args.foreach(println(_))
-      */
+     * Конструктор, позволяющий создать список из N - го числа аргументов
+     * Для этого можно воспользоваться *
+     *
+     * Например вот этот метод принимает некую последовательность аргументов с типом Int и выводит их на печать
+     * def printArgs(args: Int*) = args.foreach(println(_))
+     */
 
     /**
-      *
-      * Реализовать метод reverse который позволит заменить порядок элементов в списке на противоположный
-      */
+     *
+     * Реализовать метод reverse который позволит заменить порядок элементов в списке на противоположный
+     */
 
     /**
-      *
-      * Реализовать метод map для списка который будет применять некую ф-цию к элементам данного списка
-      */
-
-
-    /**
-      *
-      * Реализовать метод filter для списка который будет фильтровать список по некому условию
-      */
-
-    /**
-      *
-      * Написать функцию incList котрая будет принимать список Int и возвращать список,
-      * где каждый элемент будет увеличен на 1
-      */
+     *
+     * Реализовать метод map для списка который будет применять некую ф-цию к элементам данного списка
+     */
 
 
     /**
-      *
-      * Написать функцию shoutString котрая будет принимать список String и возвращать список,
-      * где к каждому элементу будет добавлен префикс в виде '!'
-      */
+     *
+     * Реализовать метод filter для списка который будет фильтровать список по некому условию
+     */
 
- }
+    /**
+     *
+     * Написать функцию incList котрая будет принимать список Int и возвращать список,
+     * где каждый элемент будет увеличен на 1
+     */
+
+
+    /**
+     *
+     * Написать функцию shoutString котрая будет принимать список String и возвращать список,
+     * где к каждому элементу будет добавлен префикс в виде '!'
+     */
+
+  }
+
+}
