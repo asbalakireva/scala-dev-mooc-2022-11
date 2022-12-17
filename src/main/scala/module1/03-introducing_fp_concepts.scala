@@ -269,7 +269,7 @@ object hof{
 
     def filter(f: T => Boolean): Option[T] = this match {
       case Option.Some(v) if f(v) => Option.Some(v)
-      case Option.None => Option.None
+      case _ => Option.None
 
     }
 
