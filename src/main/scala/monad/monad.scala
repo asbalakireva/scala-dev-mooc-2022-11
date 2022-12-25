@@ -9,7 +9,7 @@ package object monad {
 
     def get: A
 
-    def pure[R](x: R): Wrap[R] = if (x.equals(Nil)) EmptyWrap else NonEmptyWrap(x)
+    def pure[R](x: R): Wrap[R] = ??? // не пригодился
 
 
     def flatMap[R](f: A => Wrap[R]): Wrap[R] = {
