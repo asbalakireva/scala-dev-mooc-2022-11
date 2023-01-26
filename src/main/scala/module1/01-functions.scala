@@ -41,8 +41,6 @@ object functions {
     y + 1
   })
 
-
-  
   // Partial function
 
   val divide: PartialFunction[(Int, Int), Int] = {
