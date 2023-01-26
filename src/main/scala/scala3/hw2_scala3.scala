@@ -10,7 +10,6 @@ object Operators:
 
 end Operators
 
-
 // 2
 object Completions:
 
