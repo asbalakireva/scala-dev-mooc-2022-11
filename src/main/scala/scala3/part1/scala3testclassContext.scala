@@ -23,7 +23,7 @@ class GivenIntBox(using val usingParameter: Int)(using val usingParameterStr: St
 
 
 
-/*
+
 class GivenIntBox(using val usingParameter: Int):
   def myInt = summon[Int](using  usingParameter)
 
