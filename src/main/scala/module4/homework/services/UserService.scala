@@ -32,16 +32,34 @@ object UserService{
         userRepo.list()
 
 
-        def listUsersDTO(): RIO[db.DataSource,List[UserDTO]] = ???
+        def listUsersDTO(): RIO[db.DataSource,List[UserDTO]] = listUsers.flatMap(
+            users => ZIO.foreach(users)(
+                user => for {
+                    roles <- userRepo.userRoles(user.typedId)
+                } yield UserDTO(user, roles.toSet)
+            ))
         
-        def addUserWithRole(user: User, roleCode: RoleCode): RIO[db.DataSource, UserDTO] = ???
+        def addUserWithRole(user: User, roleCode: RoleCode): RIO[db.DataSource, UserDTO] = transaction(
+            for {
+                _ <- userRepo.createUser(user)
+                _ <- userRepo.insertRoleToUser(roleCode, user.typedId)
+                roles <- userRepo.userRoles(user.typedId)
+            } yield UserDTO(user, roles.toSet)
+        )
         
-        def listUsersWithRole(roleCode: RoleCode): RIO[db.DataSource,List[UserDTO]] = ???
+        def listUsersWithRole(roleCode: RoleCode): RIO[db.DataSource,List[UserDTO]] = userRepo.listUsersWithRole(roleCode)
+          .flatMap(
+            users => ZIO.foreach(users)(
+                user => for {
+                    roles <- userRepo.userRoles(user.typedId)
+                } yield UserDTO(user, roles.toSet)
+            )
+        )
         
         
     }
 
-    val live: ZLayer[UserRepository.UserRepository, Nothing, UserService] = ???
+    val live: ZLayer[UserRepository.UserRepository, Nothing, UserService] = ZLayer.fromService(ur => new Impl(ur))
 }
 
 case class UserDTO(user: User, roles: Set[Role])
